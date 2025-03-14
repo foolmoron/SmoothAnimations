@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smooth Animations</title>
+        
+    <style>
+        .root {
+            counter-reset: boxes 8;
+        }
+
+        .box {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            background-color: pink;
+            border: 2px solid rgba(0, 0, 0, 0.826);
+            border-radius: 8px;
+            margin-top: 70px;
+            margin-left: 70px;
+            transition: all 500ms;
+        }
+        .box::after {
+            counter-increment: boxes -1;
+            content: counter(boxes);
+            font-size: 2rem;
+            font-family: sans-serif;
+            position: absolute;
+            top: 6px;
+            left: 6px;
+        }
+
+        .stacking-context {
+            transform: translate3d(0px, 0px, 0px);  
+            background-color: skyblue;
+        }
+
+        .move:not(.stacking-context) {
+            margin-top: 120px;
+        }
+        .move.stacking-context {
+            transform: translate3d(0px, 50px, 0px);  
+        }
+    </style>
+    
+    <script>
+        let index = 4;
+        async function init() {
+            document.querySelectorAll(".box").forEach((box, i) => {
+                box.addEventListener("click", (evt) => {
+                    evt.preventDefault();
+                    evt.stopPropagation();
+                    index = i;
+                    document.querySelectorAll(".box").forEach(box => box.classList.remove("move"));
+                });
+            });
+        }
+        async function animate() {
+            while (true) {
+                await new Promise(res => setTimeout(res, 600));
+                document.querySelectorAll(".box")[index].classList.toggle("move");
+            }
+        }
+        window.addEventListener("load", init);
+        window.addEventListener("load", animate);
+    </script>
+</head>
+<body>
+    <div class="root">
+        <div class="box">
+            <div class="box">
+                <div class="box stacking-context">
+                    <div class="box">
+                        <div class="box">
+                            <div class="box stacking-context">
+                                <div class="box">
+                                    <div class="box"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
